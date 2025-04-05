@@ -76,7 +76,7 @@ public class Account {
 	 * This method displays all the options to choose
 	 */
 	public void showMenu() {
-		System.out.println("Hi "+customerName + ", Welcome to Online Banking!");
+		System.out.println("Hi "+ customerName + ", Welcome to Online Banking!");
 		System.out.println("Your customer Id is : "+customerId);
 		System.out.println();
 		int option=0;
