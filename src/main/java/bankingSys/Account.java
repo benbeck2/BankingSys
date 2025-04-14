@@ -64,7 +64,6 @@ public class Account {
 	}
 	
 	public void newAccount(String customerId, String accountName) {
-		System.out.println("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
 		DatabaseTest.RunCUD("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
 	}
 	
