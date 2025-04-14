@@ -1,17 +1,22 @@
 package bankingSys;
 
 import java.util.Scanner;
+import bankingSys.DatabaseTest;
+
 
 public class Account {
 	String customerName;
 	String customerId;
+	String accountId;
+	String accountName;
 	int balance;
 	int previousTransaction;
 	
 	//constructor
-	Account(String cName, String cId) {
+	Account(String cName, String cId, String aId) {
 		customerName = cName;
 		customerId = cId;
+		accountId = aId;
 	}
 	//methods
 	
@@ -55,6 +60,11 @@ public class Account {
 	 */
 	public void checkBalance() {
 		System.out.println("Balance = "+balance);
+		DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = "+ accountId +" ORDER BY transaction_id DESC LIMIT 1"));
+	}
+	
+	public void newAccount(String customerId, String accountName) {
+		DatabaseTest.RunCUD("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
 	}
 	
 	/**
@@ -76,7 +86,7 @@ public class Account {
 	 * This method displays all the options to choose
 	 */
 	public void showMenu() {
-		System.out.println("Hi "+customerName + ", Welcome to Online Banking!");
+		System.out.println("Hi "+ customerName + ", Welcome to Online Banking!");
 		System.out.println("Your customer Id is : "+customerId);
 		System.out.println();
 		int option=0;
@@ -87,7 +97,9 @@ public class Account {
 			System.out.println("2 - Deposit");
 			System.out.println("3 - Withdraw");
 			System.out.println("4 - Check Previous Transaction");
-			System.out.println("5 - Exit");
+			System.out.println("5 - New Account");
+			System.out.println("6 - New Customer");
+			System.out.println("7 - Exit");
 			
 			Scanner sc = new Scanner(System.in);
 			option = sc.nextInt();
@@ -110,6 +122,15 @@ public class Account {
 				showPreviousTransaction();
 				break;
 			case 5:
+				System.out.println("Enter the new Account name.");
+				sc.nextLine();
+				accountName = sc.nextLine();
+				newAccount(customerId, accountName);
+				break;
+			case 6:
+				System.out.println("Please contact us at 07777777777 to get Set up");
+				break;
+			case 7:
 				System.out.println("Exiting the application..");
 				break;
 			default:
