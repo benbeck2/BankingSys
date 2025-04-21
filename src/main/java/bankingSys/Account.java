@@ -1,7 +1,5 @@
 package bankingSys;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import bankingSys.DatabaseTest;
 import bankingSys.Reporting;
@@ -32,10 +30,7 @@ public class Account {
 			return;
 		}
 		else {
-			List<Map<String, String>> result = DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = " + accountId + " ORDER BY transaction_id DESC LIMIT 1");
-			Map<String, String> row = result.get(0); // First (and only) row
-			String balance = row.get("balance"); 
-			DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", " + amount + ",  (" + balance +"+"+ amount + "))");
+			balance+=amount;
 			previousTransaction=amount;
 		}
 	}
@@ -46,19 +41,16 @@ public class Account {
 	 * It also checks if the amount mentioned is smaller than the balance or not
 	 */
 	public void withdraw(int amount) {
-		List<Map<String, String>> result = DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = " + accountId + " ORDER BY transaction_id DESC LIMIT 1");
-		Map<String, String> row = result.get(0); // First (and only) row
-		String balance = row.get("balance"); 
 		if(amount<=0) {
 			System.out.println("Invalid amount. Please enter a valid amount.");
 			return;
 		}
-		else if(amount>Float.parseFloat(balance)) {
+		else if(amount>balance) {
 			System.out.println("You do not have sufficient fund in your account.");
 			return;
 		}
 		else {
-			DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", -" + amount + ",  (" + balance +"-"+ amount + "))");
+			balance-=amount;
 			previousTransaction=-amount;
 		}
 	}
@@ -73,7 +65,6 @@ public class Account {
 	
 	public void newAccount(String customerId, String accountName) {
 		DatabaseTest.RunCUD("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
-		DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", 0, 0);");
 	}
 	
 	/**
