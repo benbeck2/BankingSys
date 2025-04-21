@@ -2,7 +2,7 @@ package bankingSys;
 
 import java.util.Scanner;
 import bankingSys.DatabaseTest;
-
+import bankingSys.Reporting;
 
 public class Account {
 	String customerName;
@@ -96,7 +96,7 @@ public class Account {
 			System.out.println("1 - Check Balance");
 			System.out.println("2 - Deposit");
 			System.out.println("3 - Withdraw");
-			System.out.println("4 - Check Previous Transaction");
+			System.out.println("4 - Reporting");
 			System.out.println("5 - New Account");
 			System.out.println("6 - New Customer");
 			System.out.println("7 - Exit");
@@ -119,7 +119,7 @@ public class Account {
 				withdraw(amount);
 				break;
 			case 4:
-				showPreviousTransaction();
+				Reporting.reportingMenu(accountId, customerId);
 				break;
 			case 5:
 				System.out.println("Enter the new Account name.");
