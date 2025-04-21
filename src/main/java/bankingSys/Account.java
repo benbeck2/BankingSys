@@ -1,5 +1,7 @@
 package bankingSys;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import bankingSys.DatabaseTest;
 
@@ -30,7 +32,10 @@ public class Account {
 			return;
 		}
 		else {
-			balance+=amount;
+			List<Map<String, String>> result = DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = " + accountId + " ORDER BY transaction_id DESC LIMIT 1");
+			Map<String, String> row = result.get(0); // First (and only) row
+			String balance = row.get("balance"); 
+			DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", " + amount + ",  (" + amount +"+"+ balance + "))");
 			previousTransaction=amount;
 		}
 	}
@@ -65,6 +70,7 @@ public class Account {
 	
 	public void newAccount(String customerId, String accountName) {
 		DatabaseTest.RunCUD("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
+		DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", 0, 0);");
 	}
 	
 	/**
