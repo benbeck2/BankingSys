@@ -11,7 +11,7 @@ public class Reporting {
 		System.out.println();
 		int option=0;
 		
-		do {
+
 			System.out.println("Choose an option.");
 			System.out.println("1 - Previous Transaction");
 			System.out.println("2 - My Accounts");
@@ -25,16 +25,14 @@ public class Reporting {
 				DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT * FROM transaction WHERE account_id = "+ accountId +" ORDER BY transaction_id DESC LIMIT 1"));;
 				break;
 			case 2:
-				System.out.println("Please contact us at 07777777777 to get Set up");
+				DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT * FROM account WHERE customer_id = "+ customerId));;
 				break;
 			case 3:
-				System.out.println("Exiting the application..");
+				DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT * FROM transaction WHERE account_id = "+ accountId +" ORDER BY transaction_id DESC"));;
 				break;
 			default:
 				System.out.println("Invalid option. Please enter a valid option.");
 			}
-		}while(option!=5);
-		
-		System.out.println("Thank you for using our service!");
+		}
 	}
-}
+
