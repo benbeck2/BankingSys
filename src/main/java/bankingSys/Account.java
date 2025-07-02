@@ -67,7 +67,7 @@ public class Account {
 	 * This method displays the remaining balance
 	 */
 	public void checkBalance() {
-		System.out.println("Balance = "+balance);
+		//System.out.println("Balance = "+balance);
 		DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = "+ accountId +" ORDER BY transaction_id DESC LIMIT 1"));
 	}
 	
@@ -145,7 +145,7 @@ public class Account {
 			default:
 				System.out.println("Invalid option. Please enter a valid option.");
 			}
-		}while(option!=5);
+		}while(option!=7);
 		
 		System.out.println("Thank you for using our service!");
 		
