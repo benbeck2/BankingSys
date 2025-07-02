@@ -1,8 +1,10 @@
 package bankingSys;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import bankingSys.DatabaseTest;
-import bankingSys.Reporting;
+
 
 public class Account {
 	String customerName;
@@ -30,7 +32,10 @@ public class Account {
 			return;
 		}
 		else {
-			balance+=amount;
+			List<Map<String, String>> result = DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = " + accountId + " ORDER BY transaction_id DESC LIMIT 1");
+			Map<String, String> row = result.get(0); // First (and only) row
+			String balance = row.get("balance"); 
+			DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", " + amount + ",  (" + balance +"+"+ amount + "))");
 			previousTransaction=amount;
 		}
 	}
@@ -41,16 +46,19 @@ public class Account {
 	 * It also checks if the amount mentioned is smaller than the balance or not
 	 */
 	public void withdraw(int amount) {
+		List<Map<String, String>> result = DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = " + accountId + " ORDER BY transaction_id DESC LIMIT 1");
+		Map<String, String> row = result.get(0); // First (and only) row
+		String balance = row.get("balance"); 
 		if(amount<=0) {
 			System.out.println("Invalid amount. Please enter a valid amount.");
 			return;
 		}
-		else if(amount>balance) {
+		else if(amount>Float.parseFloat(balance)) {
 			System.out.println("You do not have sufficient fund in your account.");
 			return;
 		}
 		else {
-			balance-=amount;
+			DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", -" + amount + ",  (" + balance +"-"+ amount + "))");
 			previousTransaction=-amount;
 		}
 	}
@@ -59,13 +67,18 @@ public class Account {
 	 * This method displays the remaining balance
 	 */
 	public void checkBalance() {
-		System.out.println("Balance = "+balance);
+		//System.out.println("Balance = "+balance);
 		DatabaseTest.printQueryResults(DatabaseTest.RunRead("SELECT balance FROM transaction WHERE account_id = "+ accountId +" ORDER BY transaction_id DESC LIMIT 1"));
 	}
 	
 	public void newAccount(String customerId, String accountName) {
 		DatabaseTest.RunCUD("INSERT INTO Account (customer_id, account_name) VALUES (" + customerId +",'"+accountName+"');");
+		List<Map<String, String>> result = DatabaseTest.RunRead("SELECT account_id FROM account WHERE account_Name = '" + accountName + "'");
+		Map<String, String> row = result.get(0); // First (and only) row
+		String accountId = row.get("account_id"); 
+		DatabaseTest.RunCUD("INSERT INTO transaction (account_id, quantity, balance) VALUES (" + accountId + ", 0, 0);");
 	}
+	
 	
 	/**
 	 * This method just shows the last transaction report
@@ -96,10 +109,11 @@ public class Account {
 			System.out.println("1 - Check Balance");
 			System.out.println("2 - Deposit");
 			System.out.println("3 - Withdraw");
-			System.out.println("4 - Reporting");
+			System.out.println("4 - Check Previous Transaction");
 			System.out.println("5 - New Account");
 			System.out.println("6 - New Customer");
-			System.out.println("7 - Exit");
+			System.out.println("7 - Switch Account");
+			System.out.println("8 - Exit");
 			
 			Scanner sc = new Scanner(System.in);
 			option = sc.nextInt();
@@ -119,7 +133,7 @@ public class Account {
 				withdraw(amount);
 				break;
 			case 4:
-				Reporting.reportingMenu(accountId, customerId);
+				showPreviousTransaction();
 				break;
 			case 5:
 				System.out.println("Enter the new Account name.");
@@ -131,12 +145,17 @@ public class Account {
 				System.out.println("Please contact us at 07777777777 to get Set up");
 				break;
 			case 7:
+				System.out.println("Enter the Account you wish to switch to:");
+				sc.nextLine();
+				accountId = sc.nextLine(); 
+				break;
+			case 8:
 				System.out.println("Exiting the application..");
 				break;
 			default:
 				System.out.println("Invalid option. Please enter a valid option.");
 			}
-		}while(option!=5);
+		}while(option!=8);
 		
 		System.out.println("Thank you for using our service!");
 		
